@@ -8,9 +8,10 @@ _M.redisConf = {
     ["host"]     = ngx.var.redis_host,
     ["port"]     = ngx.var.redis_port,
     ["poolsize"] = ngx.var.redis_pool_size,
-    ["idletime"] = ngx.var.redis_keepalive_timeout , 
+    ["idletime"] = ngx.var.redis_keepalive_timeout,
     ["timeout"]  = ngx.var.redis_connect_timeout,
     ["dbid"]     = ngx.var.redis_dbid,
+    ["pass"] = ngx.var.redis_pass,
 }
 
 _M.divtypes = {

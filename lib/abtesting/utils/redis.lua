@@ -13,6 +13,7 @@ _M.new = function(self, conf)
     self.dbid       = conf.dbid
     self.poolsize   = conf.poolsize
     self.idletime   = conf.idletime
+    self.pass = conf.pass
 
     local red = redis:new()
     return setmetatable({redis = red}, { __index = _M } )
@@ -25,6 +26,7 @@ _M.connectdb = function(self)
     local port  = self.port
     local dbid  = self.dbid
     local red   = self.redis
+    local pass = self.pass
 
     if not uds and not (host and port) then
         return nil, 'no uds or tcp avaliable provided'
@@ -45,7 +47,22 @@ _M.connectdb = function(self)
 
     if host and port then
         ok, err = red:connect(host, port)
-        if ok then return red:select(dbid) end
+        --if ok then return red:select(dbid) end
+        if ok then
+            if pass then
+                --口令认证
+                local count, _ = red:get_reused_times()
+                if count == 0 then
+                    local o, _ = red:auth(pass)
+                    if not o then
+                        return
+                    end --认证失败退出
+                    end
+                    return red:select(dbid)
+                else
+                    return red:select(dbid)  --无口令直接连接
+                end
+            end
     end
 
     return ok, err
